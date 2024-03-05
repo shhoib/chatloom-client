@@ -1,0 +1,50 @@
+
+
+.roomPage{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // justify-content: center;
+
+  h3{
+     color: rgb(204, 201, 201);
+     margin-top: 3rem;
+     font-size: 2vw;
+  }
+  h2{
+    color: rgb(204, 201, 201);
+}
+
+ 
+
+ .loadingAnimation{
+    width: 15vw;
+ }
+ .callingContainer{
+    display: flex;
+    margin-top: 3rem;
+    align-items: center;
+ }
+ .myScreen{
+    width: 45vw;
+    border-radius: 20px;
+ }
+ button{
+    padding: 0.7rem 1.5rem;
+    border-radius: 7px;
+    border: none;
+    background: linear-gradient(to right, rgb(114, 46, 204), rgb(29, 1, 104));
+    color: white;
+    font-weight: 700;
+    margin-left: 2rem;
+    transition: 1s;
+}
+ button:hover{
+    box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);               
+ }
+
+ .videoContainer{
+   display: flex;
+ }
+}

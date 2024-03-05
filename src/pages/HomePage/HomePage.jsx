@@ -1,10 +1,40 @@
+import { useCallback, useState, useEffect } from 'react';
 import './HomePage.scss';
-// import {useNavigate} from 'react'
+import { useSocket } from '../../context/socketProvider';
+import {useNavigate} from 'react-router-dom';
 
 const HomePage = () => {
 
-    // const navigate = useNavigate();
-    console.log(crypto.randomUUID());
+    const [topic, setTopic] = useState('')
+    const [name, setName] = useState('')
+    const [joinRoomID, setJoinRoomID] = useState('')
+    const [joinName, setJoinName] = useState('')
+
+    const navigate = useNavigate();
+    const socket = useSocket();
+    const room = crypto.randomUUID();
+    // console.log(joinRoomID);
+    
+    const handleHostSubmit = useCallback(()=>{
+      socket.emit('room:join',{topic, room, name})
+      socket.emit('room:details',{topic, room, name})
+    },[name, room, socket, topic]);
+    const handleJoinSubmit = useCallback(()=>{
+        socket.emit('room:join',{room:joinRoomID, name:joinName})
+        socket.emit('send:JoinerName',{joinName, room:joinRoomID})
+    },[joinName, joinRoomID, socket]);
+
+    const handleJoinRoom = useCallback((data)=>{ 
+        const {room} = data;
+        navigate(`/room/${room}`)
+      },[navigate])
+    
+      useEffect(()=>{
+        socket.on('room:join', handleJoinRoom );
+        return ()=>{
+          socket.off('room:off',handleJoinRoom);
+        }
+      }, [handleJoinRoom, socket])
 
   return (
     <div className="homeContainer">
@@ -18,11 +48,19 @@ const HomePage = () => {
         </div>
 
         <div className="hostContainer">
-            <input type="text" placeholder='YOUR NAME' />
+            <input type="text" placeholder='YOUR NAME' onChange={(e)=>setName(e.target.value)} value={name}/>
             <br />
-            <input type="text" placeholder='PURPOSE OF THE MEET' />
+            <input type="text" placeholder='MEET TOPIC' onChange={(e)=>setTopic(e.target.value)} value={topic}/>
             <br />
-            <button>CREATE</button>
+            <button onClick={handleHostSubmit}>CREATE</button>
+        </div>
+
+        <div className="joinContainer">
+          <input type="text" placeholder='ENTER YOUR NAME' onChange={(e)=>setJoinName(e.target.value)} value={joinName}/>
+          <br />
+          <input type="text" placeholder='PLACE YOUR LINK HERE' onChange={(e)=>setJoinRoomID(e.target.value)} value={joinRoomID}/>
+          <br />
+          <button onClick={handleJoinSubmit}>JOIN</button>
         </div>
     </div>
   )

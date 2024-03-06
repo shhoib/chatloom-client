@@ -5,6 +5,11 @@ import ReactPlayer from 'react-player';
 import peer from '../../services/peer';
 import Lottie from 'react-lottie';
 import loading from '../../../public/animation/loading.json';
+import { MdCallEnd } from "react-icons/md";
+import { BsFillMicMuteFill } from "react-icons/bs";
+import  {useNavigate} from 'react-router-dom'
+
+
 
 const Room = () => {
 
@@ -16,11 +21,12 @@ const Room = () => {
     const [topic, setTopic] = useState('');
     const [remoteUserName, setRemoteUserName] = useState('');
     const [removeButton, setRemoveButton] = useState(false);
-    // console.log(topic);
-    console.log(removeButton);
+    const [isMuted, setIsMuted] = useState(false);
+
+    const navigate = useNavigate();
+
 
     const handleUserJoined = useCallback(({id})=>{
-        // console.log(name,id,topic,email);
        setRemoteSocketId(id)
     },[])
 
@@ -33,7 +39,6 @@ const Room = () => {
 
     const handleCallAccepted = useCallback(({ans})=>{
         peer.setLocalDescription(ans);
-        console.log('call accepted');
         sendStreams();
     },[sendStreams])
 
@@ -45,7 +50,7 @@ const Room = () => {
         const ans = await peer.getAnswer(offer);
         socket.emit('call:accepted', {to: from, ans})
         // setRemoveButton(!removeButton)
-    },[removeButton, socket])
+    },[socket])
 
     const handleNegoNeeded = useCallback(async()=>{
         const offer = await peer.getOffer();
@@ -64,10 +69,8 @@ const Room = () => {
     },[])
 
     const handleGetJoinerName = useCallback((data)=>{
-        // console.log(data);
         setRemoteUserName(data);
         setRemoveButton(!removeButton)
-        console.log(removeButton);
     },[removeButton])
     const handleNegoFinal = useCallback(async({ans})=>{
        await peer.setLocalDescription(ans)
@@ -116,6 +119,21 @@ const Room = () => {
         setMyStream(stream)
     },[remoteSocketId, socket])
 
+    const handleMute = ()=>{
+        setIsMuted(!isMuted)
+        console.log(isMuted);
+    }
+
+    const handleEndCall = useCallback(()=>{
+        if (myStream) {
+            myStream.getTracks().forEach(track => {
+                track.stop();
+            });
+        }
+        // Reset myStream state to null to indicate no active stream
+        setMyStream(null);
+        navigate('/');
+    },[myStream, navigate]);
 
   return (
     <div className='roomPage'>
@@ -145,7 +163,7 @@ const Room = () => {
 
         {myStream && (
             <>
-           <h1>my stream</h1>
+           {/* <h1>my stream</h1> */}
            <div className="streamContainer">
            <ReactPlayer playing muted height='100%' width='100%' url={myStream}/>
            </div>
@@ -156,13 +174,22 @@ const Room = () => {
         <button onClick={sendStreams}>Turn on camera</button>
         }
 
-        {remoteStream && (
+        {remoteStream && removeButton && (
             <>
-           <h1>{remoteUserName}</h1>
-           <ReactPlayer playing muted height='300px' width='300px' url={remoteStream}/>
+           {/* <h1>{remoteUserName}</h1> */}
+           <div className="streamContainer">
+           <ReactPlayer playing muted height='100%' width='100%' url={remoteStream}/>
+           </div>
            </> 
         )}
-     </div>
+      </div>
+
+      { remoteStream &&
+      <div className="buttonsContainer">
+       <button className='muteButton' onClick={handleMute}><BsFillMicMuteFill/></button>
+       <button className='endCall'onClick={handleEndCall}><MdCallEnd/></button>
+      </div>
+      }
     </div>
   )
 }

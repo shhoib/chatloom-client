@@ -28,14 +28,13 @@ const Room = () => {
         for (const track of myStream.getTracks()){
             peer.peer.addTrack( track , myStream);
         }
-        setRemoveButton(!removeButton)
-    },[myStream, removeButton])
+        setRemoveButton(true)
+    },[myStream])
 
     const handleCallAccepted = useCallback(({ans})=>{
         peer.setLocalDescription(ans);
         console.log('call accepted');
         sendStreams();
-        
     },[sendStreams])
 
     const handleIncomingCall = useCallback( async({from, offer})=>{
@@ -45,7 +44,7 @@ const Room = () => {
         setMyStream(stream)
         const ans = await peer.getAnswer(offer);
         socket.emit('call:accepted', {to: from, ans})
-        setRemoveButton(!removeButton)
+        // setRemoveButton(!removeButton)
     },[removeButton, socket])
 
     const handleNegoNeeded = useCallback(async()=>{
@@ -67,8 +66,9 @@ const Room = () => {
     const handleGetJoinerName = useCallback((data)=>{
         // console.log(data);
         setRemoteUserName(data);
-    },[])
-
+        setRemoveButton(!removeButton)
+        console.log(removeButton);
+    },[removeButton])
     const handleNegoFinal = useCallback(async({ans})=>{
        await peer.setLocalDescription(ans)
     },[]);
@@ -146,11 +146,13 @@ const Room = () => {
         {myStream && (
             <>
            <h1>my stream</h1>
-           <ReactPlayer playing muted height='300px' width='300px' url={myStream}/>
+           <div className="streamContainer">
+           <ReactPlayer playing muted height='100%' width='100%' url={myStream}/>
+           </div>
            </> 
         )}
 
-        {myStream && removeButton &&
+        {myStream && !removeButton &&
         <button onClick={sendStreams}>Turn on camera</button>
         }
 

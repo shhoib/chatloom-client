@@ -29,7 +29,7 @@ const HomePage = () => {
         navigate(`/room/${room}`)
       },[navigate])
     
-      useEffect(()=>{
+      useEffect(()=>{ 
         socket.on('room:join', handleJoinRoom );
         return ()=>{
           socket.off('room:off',handleJoinRoom);

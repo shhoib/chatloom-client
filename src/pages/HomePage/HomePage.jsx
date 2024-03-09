@@ -8,19 +8,22 @@ const HomePage = () => {
     const [topic, setTopic] = useState('')
     const [name, setName] = useState('')
     const [joinRoomID, setJoinRoomID] = useState('')
-    const [joinName, setJoinName] = useState('')
+    const [joinName, setJoinName] = useState('');
+    const [isHost, setIsHost] =  useState(false);
+    const [isJoin, setIsJoin] =  useState(false);
 
     const navigate = useNavigate();
     const socket = useSocket();
     const room = crypto.randomUUID();
-    // console.log(joinRoomID);
     
     const handleHostSubmit = useCallback(()=>{
-      socket.emit('room:join',{topic, room, name})
-      socket.emit('room:details',{topic, room, name})
+      socket.emit('room:join',{topic, room, name});
+      setTimeout(() => {   
+        socket.emit('room:details',{topic, room, name})
+      }, 300);
     },[name, room, socket, topic]);
     const handleJoinSubmit = useCallback(()=>{
-        socket.emit('room:join',{room:joinRoomID, name:joinName})
+        socket.emit('room:join',{room:joinRoomID, joinName})
         socket.emit('send:JoinerName',{joinName, room:joinRoomID})
     },[joinName, joinRoomID, socket]);
 
@@ -34,7 +37,18 @@ const HomePage = () => {
         return ()=>{
           socket.off('room:off',handleJoinRoom);
         }
-      }, [handleJoinRoom, socket])
+      }, [handleJoinRoom, socket]);
+
+      const handleHostButton = useCallback(()=>{
+        setIsHost(!isHost)
+        setIsJoin(false)
+      },[isHost]);
+
+      const handleJoinButton = useCallback(()=>{
+        setIsJoin(!isJoin)
+        setIsHost(false)
+      },[isJoin]);
+
 
   return (
     <div className="homeContainer">
@@ -42,11 +56,12 @@ const HomePage = () => {
           <img src="./IMG/landingAnimation.gif" alt="" />
           <h1>WELCOME TO <br /><span>CHATLOOM</span></h1>
           <div className="buttons">
-            <button>HOST</button>
-            <button>JOIN</button>
+            <button onClick={handleHostButton}>HOST</button>
+            <button onClick={handleJoinButton}>JOIN</button>
           </div>
         </div>
 
+        {isHost &&
         <div className="hostContainer">
             <input type="text" placeholder='YOUR NAME' onChange={(e)=>setName(e.target.value)} value={name}/>
             <br />
@@ -54,7 +69,9 @@ const HomePage = () => {
             <br />
             <button onClick={handleHostSubmit}>CREATE</button>
         </div>
+        }
 
+        { isJoin && 
         <div className="joinContainer">
           <input type="text" placeholder='ENTER YOUR NAME' onChange={(e)=>setJoinName(e.target.value)} value={joinName}/>
           <br />
@@ -62,6 +79,7 @@ const HomePage = () => {
           <br />
           <button onClick={handleJoinSubmit}>JOIN</button>
         </div>
+        }
     </div>
   )
 }

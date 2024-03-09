@@ -7,8 +7,8 @@ import Lottie from 'react-lottie';
 import loading from '../../../public/animation/loading.json';
 import { MdCallEnd } from "react-icons/md";
 import { BsFillMicMuteFill } from "react-icons/bs";
-import  {useNavigate} from 'react-router-dom'
-
+import  {useNavigate, useParams } from 'react-router-dom'
+import { AiOutlineCopy } from "react-icons/ai";
 
 
 const Room = () => {
@@ -22,11 +22,13 @@ const Room = () => {
     const [remoteUserName, setRemoteUserName] = useState('');
     const [removeButton, setRemoveButton] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
+    const [currentUserName, setCurrentUserName] = useState('')
 
     const navigate = useNavigate();
+    const {roomId} = useParams();
 
-
-    const handleUserJoined = useCallback(({id})=>{
+    const handleUserJoined = useCallback(({id, Sname, Stopic, joinName})=>{
+        console.log('joined', Sname, Stopic, joinName);
        setRemoteSocketId(id)
     },[])
 
@@ -42,14 +44,16 @@ const Room = () => {
         sendStreams();
     },[sendStreams])
 
-    const handleIncomingCall = useCallback( async({from, offer})=>{
-        // console.log('incoming call', from, offer);
+    const handleIncomingCall = useCallback( async({from, offer,remoteUserName, topic, currentUserName})=>{
+        console.log('incoming call', remoteUserName);
         setRemoteSocketId(from)
+        setCurrentUserName(remoteUserName)
         const stream = await navigator.mediaDevices.getUserMedia({audio:true,video:true});
-        setMyStream(stream)
+        setMyStream(stream);
+        setTopic(topic.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))
+        setRemoteUserName(currentUserName)
         const ans = await peer.getAnswer(offer);
         socket.emit('call:accepted', {to: from, ans})
-        // setRemoveButton(!removeButton)
     },[socket])
 
     const handleNegoNeeded = useCallback(async()=>{
@@ -64,8 +68,8 @@ const Room = () => {
 
     const handleGetRoomDetails = useCallback(({name,topic})=>{
         console.log(name,topic,'roommDAta'); 
-        setTopic(topic)
-        setRemoteUserName(name)
+        setTopic(topic.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))
+        setCurrentUserName(name)
     },[])
 
     const handleGetJoinerName = useCallback((data)=>{
@@ -79,7 +83,7 @@ const Room = () => {
     useEffect(()=>{
         peer.peer.addEventListener('track', async ev=>{
             const remoteStream = ev.streams;
-            console.log('got tracks');
+            // console.log('got tracks');
             setRemoteStream(remoteStream[0])
         })
     },[]);
@@ -94,6 +98,14 @@ const Room = () => {
     useEffect(()=>{
         socket.on('getRoom:details', handleGetRoomDetails);
         socket.on('get:joinerName', handleGetJoinerName);
+
+        return()=>{
+            socket.off('getRoom:details', handleGetRoomDetails);
+            socket.off('get:joinerName', handleGetJoinerName);
+        }
+    },[handleGetJoinerName, handleGetRoomDetails, socket])
+
+    useEffect(()=>{    
         socket.on('user:joined', handleUserJoined);
         socket.on('incoming:call', handleIncomingCall);
         socket.on('call:accepted', handleCallAccepted);
@@ -105,23 +117,19 @@ const Room = () => {
             socket.off('incoming:call', handleIncomingCall)
             socket.off('call:accepted', handleCallAccepted)
             socket.off('peer:nego:needed', handleNegoIncoming);
-            socket.off('peer:nego:final', handleNegoFinal);
-            socket.off('getRoom:details', handleGetRoomDetails);
-            socket.off('get:joinerName', handleGetJoinerName);
+            socket.off('peer:nego:final', handleNegoFinal);      
         }
-    },[handleCallAccepted, handleGetJoinerName, handleGetRoomDetails, handleIncomingCall, handleNegoFinal, 
-        handleNegoIncoming, handleUserJoined, socket]);
+    },[handleCallAccepted, handleIncomingCall, handleNegoFinal, handleNegoIncoming, handleUserJoined, socket]);
 
     const handleCall = useCallback(async()=>{
         const stream = await navigator.mediaDevices.getUserMedia({audio:true,video:true});
         const offer = await peer.getOffer();
-        socket.emit('user:call', {to : remoteSocketId, offer});
+        socket.emit('user:call', {to : remoteSocketId, offer, remoteUserName, topic, currentUserName});
         setMyStream(stream)
-    },[remoteSocketId, socket])
+    },[currentUserName, remoteSocketId, remoteUserName, socket, topic])
 
     const handleMute = ()=>{
         setIsMuted(!isMuted)
-        console.log(isMuted);
     }
 
     const handleEndCall = useCallback(()=>{
@@ -130,25 +138,34 @@ const Room = () => {
                 track.stop();
             });
         }
-        // Reset myStream state to null to indicate no active stream
         setMyStream(null);
         navigate('/');
     },[myStream, navigate]);
 
+    const handleCopyRoomId = useCallback(() => {
+        navigator.clipboard.writeText(roomId)
+    }, [roomId]);
+
   return (
     <div className='roomPage'>
+        
         { !remoteSocketId && 
         <>
+        
         <h3>Please wait for someone to join...</h3>
         <div className="loadingAnimation">
-
         <Lottie 
           options={{
               loop: true,
               autoplay: true,
               animationData: loading,
             }}/>
-         </div>
+        </div>
+        <h2>copy your link here!!</h2>
+        <div className="copyContainer">
+          <input type="text" value={roomId} readOnly/>
+          <button onClick={handleCopyRoomId}><AiOutlineCopy/></button>
+        </div>
         </>
         }
 
@@ -159,12 +176,15 @@ const Room = () => {
         </div>
         }
 
-        <div className="videoContainer">
+        {myStream &&
+          <h1 className='topic'>Topic : {topic}</h1>
+        }
 
+        <div className="videoContainer">
         {myStream && (
             <>
-           {/* <h1>my stream</h1> */}
            <div className="streamContainer">
+           <h1>{currentUserName}</h1>
            <ReactPlayer playing muted height='100%' width='100%' url={myStream}/>
            </div>
            </> 
@@ -176,8 +196,8 @@ const Room = () => {
 
         {remoteStream && removeButton && (
             <>
-           {/* <h1>{remoteUserName}</h1> */}
            <div className="streamContainer">
+           <h1>{remoteUserName}</h1>
            <ReactPlayer playing muted height='100%' width='100%' url={remoteStream}/>
            </div>
            </> 

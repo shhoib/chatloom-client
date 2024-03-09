@@ -47,7 +47,8 @@
                 transition: 1s;
             }
             button:hover{
-                box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);               
+                box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);  
+                background: rgb(29, 1, 104);             
             }
         }
     }
@@ -80,6 +81,7 @@
     }
     button:hover{
         box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);               
+        background: rgb(29, 1, 104);
     }
 
     .joinContainer{

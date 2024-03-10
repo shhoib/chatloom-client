@@ -1,4 +1,4 @@
-
+@import '../../App.scss';
 
 .roomPage{
 
@@ -52,6 +52,16 @@
    display: flex;
    align-items: center;
    justify-content: center;
+
+   @include fold{
+      flex-direction: column;
+   }
+   @include mobile{
+      flex-direction: column;
+   }
+   @include tablet{
+      flex-direction: column;
+   }
  }
  .streamContainer{
    border-radius: 50%;
@@ -60,6 +70,20 @@
    margin-left: 1vw;
    margin-right: 1vw;
    position: relative;
+
+   @include fold{
+      height: 40vh;
+      width: 90vw;
+   }
+   @include mobile{
+      height: 40vh;
+      width: 90vw;
+   }
+   @include tablet{
+      height: 42vh;
+      width: 95vw;
+      margin-top: 1rem;
+   }
 
    h1{
       text-align: center;
@@ -71,6 +95,16 @@
       padding: .4rem 0.6rem;
       border-radius: 10px;
       font-weight: 400;
+
+      @include fold{
+         top: 15%;
+      }
+      @include mobile{
+         top: 15%;
+      }
+      @include tablet{
+         left: 15%;
+      }
    }
  }
  .endCall{
@@ -85,6 +119,10 @@
    display: flex;
    gap: 1rem;
    align-items: center;
+
+   @include tablet{
+      margin-top: 1rem;
+   }
  }
  .muteButton{
    background: rgb(44, 44, 44);
@@ -118,6 +156,10 @@
    padding: .5rem 1.5rem;
    border-radius: 10px;
    font-size: 1.5rem;
+
+   @include mobile{
+      margin-top: 2rem;
+   }
  }
  .streamContainer .react-player {
    border-radius: 20px;

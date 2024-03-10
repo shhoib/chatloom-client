@@ -1,3 +1,4 @@
+@import '../../App.scss';
 
 .homeContainer{
     display: flex;
@@ -6,50 +7,87 @@
     background-color: rgb(3,3,3);
     flex-direction: column;
 
-    img{
-        // width: 100%;
-        // margin-left: 50%;
-        height: 100vh;
+    h1{
+        text-align: center;
+        font-size: 8vh;
+        margin-top: 3rem;
+        font-weight: 500;
+
+        @include fold{
+            font-size: 4vh;
+        }
+        @include mobile{
+            font-size: 4vh;
+        }
+        @include tablet{
+            font-size: 6vh;
+        }
     }
+    h3{
+        text-align: center;
+        margin-top: 1.3rem;
+        font-weight: 100;
 
-    .textANDgif{
+        @include fold{
+            font-size: 2vh;
+            padding: 0 1rem;
+        }
+        @include mobile{
+            font-size: 2vh;
+            padding: 0 1rem;
+        }
+        @include tablet{
+            font-size: 2.5vh;
+        }
+    }
+    .imageContainer{
         position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: inline-block; 
+        width: 100%;
+        margin-top: 1.5rem;
+        text-align: center;
 
-        h1{
-            position: absolute;
-            top: 15%;
-            font-weight: 900;
-            font-size: 2rem;
-            color: rgb(208, 195, 248);
-            text-align: center;
+        img{
+            width: 70%;
+            border-radius: 15px;
 
-            span{
-                color: rgb(22, 10, 56);
-                font-size: 3.5rem;
-                text-shadow: 4px 4px 8px rgb(0, 0, 0);
+            @include fold{
+                width: 100%;
+                margin-top: 1rem;
+            }
+            @include mobile{
+                width: 100%;
+                margin-top: 1rem;
+            }
+            @include tablet{
+                width: 100%;
+                margin-top: 1rem;
             }
         }
-        .buttons{
-            position: absolute;
-            bottom: 5%;
-
-            button{
-                padding: 0.9rem 1.5rem;
-                border-radius: 7px;
-                border: none;
-                background: linear-gradient(to right, rgb(114, 46, 204), rgb(29, 1, 104));
-                color: white;
-                font-weight: 700;
-                margin: 0 1rem 0 1rem;
-                transition: 1s;
-            }
-            button:hover{
-                box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);  
-                background: rgb(29, 1, 104);             
-            }
+    }
+      .imageContainer::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(10, 10, 10, 0.5);
+      }
+      .buttons{
+        button{
+            padding: 1rem 1.7rem;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(to right, rgb(114, 46, 204), rgb(29, 1, 104));
+            color: white;
+            font-weight: 700;
+            margin: 2rem 1rem 0 1rem;
+            transition: 1s;
+        }
+        button:hover{
+            box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);  
+            background: rgb(29, 1, 104);             
         }
     }
 
@@ -57,22 +95,33 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-top: 2rem;
 
     }
     input{
         padding: .8rem;
-        border-radius: 10px;
+        border-radius: 20px;
         border: none;
         width: 25vw;
         background-color: rgb(191, 149, 247);
         color: white;
+
+        @include mobile{
+            width: 70vw;
+        }
+        @include fold{
+            width: 70vw;
+        }
+        @include tablet{
+            width: 70vw;
+        }
     }
     input::placeholder {
         color: white; 
     }
     button{
         padding: 0.9rem 1.5rem;
-        border-radius: 7px;
+        border-radius: 20px;
         border: none;
         background: linear-gradient(to right, rgb(114, 46, 204), rgb(29, 1, 104));
         color: white;

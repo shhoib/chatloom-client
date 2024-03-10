@@ -52,16 +52,25 @@ const HomePage = () => {
 
   return (
     <div className="homeContainer">
-        <div className="textANDgif">
-          <img src="./IMG/landingAnimation.gif" alt="" />
-          <h1>WELCOME TO <br /><span>CHATLOOM</span></h1>
-          <div className="buttons">
+
+        {/* <div className="textANDgif">
+          <img src="./IMG/landingAnimation.gif" alt="" /> */}
+          {/* <h1>WELCOME TO <br /><span>CHATLOOM</span></h1> */}
+          {/* <h1>Adding Values <br /> Through Video Calls</h1> */}
+          {/* <div className="buttons">
             <button onClick={handleHostButton}>HOST</button>
             <button onClick={handleJoinButton}>JOIN</button>
           </div>
-        </div>
+        </div> */}
 
-        {isHost &&
+        <h1>Adding Values <br /> Through Video Calls</h1>
+        <h3>No registration needed.To start chatting <br /> with friends just send them link and enjoy video call</h3>
+        <div className="buttons">
+            <button onClick={handleHostButton}>HOST</button>
+            <button onClick={handleJoinButton}>JOIN</button>
+          </div>
+
+          {isHost &&
         <div className="hostContainer">
             <input type="text" placeholder='YOUR NAME' onChange={(e)=>setName(e.target.value)} value={name}/>
             <br />
@@ -80,6 +89,10 @@ const HomePage = () => {
           <button onClick={handleJoinSubmit}>JOIN</button>
         </div>
         }
+
+        <div className="imageContainer">
+        <img src="https://i.pinimg.com/564x/40/10/8c/40108c74eaeb2513e9ec65cc49b2545b.jpg" alt="" />
+        </div>  
     </div>
   )
 }

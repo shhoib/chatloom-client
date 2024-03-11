@@ -42,10 +42,20 @@
     font-weight: 700;
     margin-left: 2rem;
     transition: 1s;
-    height: 100%;
 }
  button:hover{
     box-shadow: 2px 2px 8px 5px rgba(102, 102, 102, 0.2);               
+ }
+ .cameraButton{
+   @include fold{
+      margin: 4rem;
+   }
+   @include mobile{
+      margin: 4rem;
+   }
+   @include tablet{
+      margin: 4rem;
+   }
  }
 
  .videoContainer{
@@ -159,6 +169,9 @@
 
    @include mobile{
       margin-top: 2rem;
+   }
+   @include tablet{
+      margin: 2rem;
    }
  }
  .streamContainer .react-player {

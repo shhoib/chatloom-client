@@ -91,7 +91,7 @@ const HomePage = () => {
         }
 
         <div className="imageContainer">
-        <img src="https://i.pinimg.com/564x/40/10/8c/40108c74eaeb2513e9ec65cc49b2545b.jpg" alt="" />
+        <img src="./IMG/banner.jpg" alt="" />
         </div>  
     </div>
   )

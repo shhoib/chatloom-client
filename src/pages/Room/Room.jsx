@@ -191,7 +191,7 @@ const Room = () => {
         )}
 
         {myStream && !removeButton &&
-        <button onClick={sendStreams}>Turn on camera</button>
+        <button className='cameraButton' onClick={sendStreams}>Turn on camera</button>
         }
 
         {remoteStream && removeButton && (
